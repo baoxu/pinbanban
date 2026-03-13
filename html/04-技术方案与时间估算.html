@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼板板 - 项目文档</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.8;
+      color: #2d3436;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f8f9fa;
+    }
+    .container {
+      background: white;
+      padding: 60px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 32px;
+      color: #1e90ff;
+      border-bottom: 3px solid #1e90ff;
+      padding-bottom: 15px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 24px;
+      color: #2d3436;
+      border-left: 4px solid #1e90ff;
+      padding-left: 15px;
+      margin-top: 40px;
+    }
+    h3 {
+      font-size: 20px;
+      color: #2d3436;
+      margin-top: 30px;
+    }
+    h4 {
+      font-size: 18px;
+      color: #636e72;
+      margin-top: 25px;
+    }
+    p { margin: 15px 0; }
+    ul, ol { margin: 15px 0; padding-left: 30px; }
+    li { margin: 8px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #dfe6e9;
+      padding: 12px 15px;
+      text-align: left;
+    }
+    th {
+      background: #f1f2f6;
+      font-weight: 600;
+      color: #2d3436;
+    }
+    tr:nth-child(even) { background: #f8f9fa; }
+    tr:hover { background: #e3f2fd; }
+    code {
+      background: #f1f2f6;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: #e84393;
+    }
+    pre {
+      background: #2d3436;
+      color: #dfe6e9;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+    blockquote {
+      border-left: 4px solid #1e90ff;
+      margin: 20px 0;
+      padding: 15px 20px;
+      background: #f1f8ff;
+      color: #636e72;
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #dfe6e9;
+      margin: 40px 0;
+    }
+    .toc {
+      background: #f8f9fa;
+      padding: 20px 30px;
+      border-radius: 8px;
+      margin: 30px 0;
+    }
+    .toc ul { margin: 10px 0; padding-left: 20px; }
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 40px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      a { color: #2d3436; text-decoration: none; }
+      pre { white-space: pre-wrap; word-wrap: break-word; }
+      @page { margin: 2cm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+<h1>拼板板 - 技术方案与时间估算</h1>
+<hr>
+<h2>一、技术架构</h2>
+<h3>1.1 整体架构</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                              拼板板技术架构                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  前端层 (Frontend)                                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                       │
+│  │  微信小程序  │  │   H5 页面     │  │  管理后台    │                       │
+│  │  (Taro/原生) │  │  (Vue3)      │  │  (React)     │                       │
+│  └──────────────┘  └──────────────┘  └──────────────┘                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  网关层 (Gateway)                                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │                      Nginx + API Gateway                             │   │
+│  │              (负载均衡 / 限流 / 鉴权 / SSL)                          │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  服务层 (Backend Services)                                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │ 用户服务 │ │ 订单服务 │ │ 拼单服务 │ │ 支付服务 │ │ 通知服务 │ │ 文件服务 │   │
+│  │  Node.js│ │ Node.js │ │ Node.js │ │ Node.js │ │ Node.js │ │ Node.js │   │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘   │
+│                                                                              │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐                           │
+│  │ AI 推荐  │ │ 图案服务 │ │ 物流服务 │ │ 数据统计 │                           │
+│  │ Python  │ │ Node.js │ │ Node.js │ │ Node.js │                           │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  数据层 (Data Layer)                                                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                   │
+│  │    MySQL      │  │    Redis      │  │  MongoDB      │                   │
+│  │  (订单/用户)  │  │  (缓存/会话)  │  │  (日志/行为)  │                   │
+│  └───────────────┘  └───────────────┘  └───────────────┘                   │
+│                                                                              │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                   │
+│  │  OSS(阿里云)  │  │  消息队列     │  │  Elasticsearch│                   │
+│  │  (图片/图案)  │  │   RabbitMQ    │  │  (搜索)       │                   │
+│  └───────────────┘  └───────────────┘  └───────────────┘                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>1.2 技术选型</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>技术栈</th>
+<th>选型理由</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小程序</td>
+<td>Taro + React</td>
+<td>跨端、生态成熟、开发效率高</td>
+</tr>
+<tr>
+<td>H5</td>
+<td>Vue3 + Vite</td>
+<td>轻量、性能好、团队熟悉</td>
+</tr>
+<tr>
+<td>管理后台</td>
+<td>React + Ant Design Pro</td>
+<td>组件丰富、开箱即用</td>
+</tr>
+<tr>
+<td>后端框架</td>
+<td>NestJS (Node.js)</td>
+<td>TypeScript、模块化、易维护</td>
+</tr>
+<tr>
+<td>AI 服务</td>
+<td>Python + FastAPI</td>
+<td>ML 生态好、部署简单</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>MySQL 8.0</td>
+<td>成熟稳定、事务支持</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>Redis 7.0</td>
+<td>高性能、数据结构丰富</td>
+</tr>
+<tr>
+<td>消息队列</td>
+<td>RabbitMQ</td>
+<td>可靠、支持延迟队列</td>
+</tr>
+<tr>
+<td>对象存储</td>
+<td>阿里云 OSS</td>
+<td>国内访问快、成本低</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>Docker + K8s</td>
+<td>容器化、弹性伸缩</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>二、数据库设计（核心表）</h2>
+<h3>2.1 用户表 (users)</h3>
+<pre><code class="language-sql">CREATE TABLE users (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  openid VARCHAR(64) UNIQUE NOT NULL,      -- 微信 openid
+  nickname VARCHAR(64),                     -- 昵称
+  avatar VARCHAR(255),                      -- 头像
+  phone VARCHAR(20),                        -- 手机号
+  height INT,                               -- 身高 (cm)
+  weight INT,                               -- 体重 (kg)
+  skill_level TINYINT,                      -- 滑雪水平 1-5
+  style_preference VARCHAR(32),             -- 风格偏好
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_openid (openid)
+);
+</code></pre>
+<h3>2.2 板型表 (board_types)</h3>
+<pre><code class="language-sql">CREATE TABLE board_types (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(64) NOT NULL,                -- 板型名称
+  code VARCHAR(32) UNIQUE NOT NULL,         -- 板型编码
+  category TINYINT NOT NULL,                -- 类别 1=全山 2=公园 3=野雪
+  difficulty TINYINT,                       -- 难度 1-5
+  base_price DECIMAL(10,2),                 -- 基础价格
+  description TEXT,                         -- 描述
+  images JSON,                              -- 图片数组
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+</code></pre>
+<h3>2.3 拼单表 (group_orders)</h3>
+<pre><code class="language-sql">CREATE TABLE group_orders (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  order_no VARCHAR(32) UNIQUE NOT NULL,     -- 拼单号
+  board_type_id BIGINT NOT NULL,            -- 板型 ID
+  board_length INT NOT NULL,                -- 长度 (cm)
+  waist_width INT NOT NULL,                 -- 板腰 (mm)
+  sidecut_radius DECIMAL(4,1) NOT NULL,     -- 侧切半径 (m)
+  binding_angle VARCHAR(16),                -- 固定器角度
+  pattern_id BIGINT,                        -- 图案 ID
+  target_count INT NOT NULL DEFAULT 3,      -- 目标人数
+  current_count INT NOT NULL DEFAULT 1,     -- 当前人数
+  status TINYINT NOT NULL DEFAULT 1,        -- 状态 1=拼单中 2=成功 3=失败
+  expire_at TIMESTAMP NOT NULL,             -- 过期时间
+  created_by BIGINT NOT NULL,               -- 创建人
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_status (status),
+  INDEX idx_expire (expire_at)
+);
+</code></pre>
+<h3>2.4 拼单成员表 (group_order_members)</h3>
+<pre><code class="language-sql">CREATE TABLE group_order_members (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  group_order_id BIGINT NOT NULL,           -- 拼单 ID
+  user_id BIGINT NOT NULL,                  -- 用户 ID
+  role TINYINT NOT NULL DEFAULT 2,          -- 角色 1=发起人 2=参与者
+  deposit_paid BOOLEAN DEFAULT false,       -- 定金已付
+  deposit_amount DECIMAL(10,2),             -- 定金金额
+  final_price DECIMAL(10,2),                -- 最终价格
+  status TINYINT NOT NULL DEFAULT 1,        -- 状态 1=待支付 2=已支付 3=已退出
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY idx_group_user (group_order_id, user_id)
+);
+</code></pre>
+<h3>2.5 订单表 (orders)</h3>
+<pre><code class="language-sql">CREATE TABLE orders (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  order_no VARCHAR(32) UNIQUE NOT NULL,     -- 订单号
+  group_order_id BIGINT,                    -- 拼单 ID
+  user_id BIGINT NOT NULL,                  -- 用户 ID
+  board_type_id BIGINT NOT NULL,            -- 板型 ID
+  board_length INT NOT NULL,                -- 长度
+  waist_width INT NOT NULL,                 -- 板腰
+  sidecut_radius DECIMAL(4,1) NOT NULL,     -- 侧切
+  binding_angle VARCHAR(16),                -- 固定器角度
+  pattern_id BIGINT,                        -- 图案 ID
+  total_amount DECIMAL(10,2) NOT NULL,      -- 总金额
+  deposit_amount DECIMAL(10,2),             -- 定金
+  final_amount DECIMAL(10,2),               -- 尾款
+  status TINYINT NOT NULL DEFAULT 1,        -- 状态
+  factory_id BIGINT,                        -- 工厂 ID
+  production_status TINYINT,                -- 生产状态
+  tracking_no VARCHAR(64),                  -- 物流单号
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  paid_at TIMESTAMP NULL,
+  shipped_at TIMESTAMP NULL,
+  completed_at TIMESTAMP NULL,
+  INDEX idx_user (user_id),
+  INDEX idx_status (status)
+);
+</code></pre>
+<hr>
+<h2>三、API 设计（核心接口）</h2>
+<h3>3.1 拼单相关</h3>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建拼单</td>
+<td>POST</td>
+<td>/api/v1/group-orders</td>
+<td>创建新拼单</td>
+</tr>
+<tr>
+<td>拼单列表</td>
+<td>GET</td>
+<td>/api/v1/group-orders</td>
+<td>获取拼单列表</td>
+</tr>
+<tr>
+<td>拼单详情</td>
+<td>GET</td>
+<td>/api/v1/group-orders/:id</td>
+<td>获取拼单详情</td>
+</tr>
+<tr>
+<td>加入拼单</td>
+<td>POST</td>
+<td>/api/v1/group-orders/:id/join</td>
+<td>加入拼单</td>
+</tr>
+<tr>
+<td>退出拼单</td>
+<td>POST</td>
+<td>/api/v1/group-orders/:id/quit</td>
+<td>退出拼单</td>
+</tr>
+<tr>
+<td>拼单匹配</td>
+<td>GET</td>
+<td>/api/v1/group-orders/match</td>
+<td>获取推荐拼单</td>
+</tr>
+</tbody></table>
+<h3>3.2 订单相关</h3>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建订单</td>
+<td>POST</td>
+<td>/api/v1/orders</td>
+<td>创建订单</td>
+</tr>
+<tr>
+<td>订单列表</td>
+<td>GET</td>
+<td>/api/v1/orders</td>
+<td>获取订单列表</td>
+</tr>
+<tr>
+<td>订单详情</td>
+<td>GET</td>
+<td>/api/v1/orders/:id</td>
+<td>获取订单详情</td>
+</tr>
+<tr>
+<td>支付定金</td>
+<td>POST</td>
+<td>/api/v1/orders/:id/deposit</td>
+<td>支付定金</td>
+</tr>
+<tr>
+<td>支付尾款</td>
+<td>POST</td>
+<td>/api/v1/orders/:id/final</td>
+<td>支付尾款</td>
+</tr>
+<tr>
+<td>确认收货</td>
+<td>POST</td>
+<td>/api/v1/orders/:id/confirm</td>
+<td>确认收货</td>
+</tr>
+</tbody></table>
+<h3>3.3 用户相关</h3>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>微信登录</td>
+<td>POST</td>
+<td>/api/v1/auth/wechat</td>
+<td>微信登录</td>
+</tr>
+<tr>
+<td>用户信息</td>
+<td>GET</td>
+<td>/api/v1/users/me</td>
+<td>获取当前用户</td>
+</tr>
+<tr>
+<td>更新档案</td>
+<td>PUT</td>
+<td>/api/v1/users/me/profile</td>
+<td>更新滑雪档案</td>
+</tr>
+<tr>
+<td>我的拼单</td>
+<td>GET</td>
+<td>/api/v1/users/me/groups</td>
+<td>获取我的拼单</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>四、开发时间估算</h2>
+<h3>4.1 MVP 版本（3 个月）</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>工作内容</th>
+<th>交付物</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>第 1 月</strong></td>
+<td>4 周</td>
+<td>需求细化 + 技术选型 + 环境搭建</td>
+<td>技术方案文档、开发环境</td>
+</tr>
+<tr>
+<td>第 1 周</td>
+<td>-</td>
+<td>需求评审、原型确认</td>
+<td>PRD 终稿</td>
+</tr>
+<tr>
+<td>第 2 周</td>
+<td>-</td>
+<td>技术选型、架构设计</td>
+<td>技术方案文档</td>
+</tr>
+<tr>
+<td>第 3 周</td>
+<td>-</td>
+<td>数据库设计、API 设计</td>
+<td>数据库 ER 图、API 文档</td>
+</tr>
+<tr>
+<td>第 4 周</td>
+<td>-</td>
+<td>开发环境、CI/CD 搭建</td>
+<td>可运行的开发环境</td>
+</tr>
+<tr>
+<td><strong>第 2 月</strong></td>
+<td>4 周</td>
+<td>核心功能开发</td>
+<td>可测试的 MVP</td>
+</tr>
+<tr>
+<td>第 5 周</td>
+<td>-</td>
+<td>用户系统、微信登录</td>
+<td>登录注册完成</td>
+</tr>
+<tr>
+<td>第 6 周</td>
+<td>-</td>
+<td>板型配置、参数选择</td>
+<td>定制流程完成</td>
+</tr>
+<tr>
+<td>第 7 周</td>
+<td>-</td>
+<td>拼单系统、状态机</td>
+<td>拼单功能完成</td>
+</tr>
+<tr>
+<td>第 8 周</td>
+<td>-</td>
+<td>支付对接、订单管理</td>
+<td>支付流程完成</td>
+</tr>
+<tr>
+<td><strong>第 3 月</strong></td>
+<td>4 周</td>
+<td>测试 + 优化 + 上线</td>
+<td>正式上线</td>
+</tr>
+<tr>
+<td>第 9 周</td>
+<td>-</td>
+<td>内部测试、Bug 修复</td>
+<td>测试报告</td>
+</tr>
+<tr>
+<td>第 10 周</td>
+<td>-</td>
+<td>性能优化、压力测试</td>
+<td>性能报告</td>
+</tr>
+<tr>
+<td>第 11 周</td>
+<td>-</td>
+<td>小程序审核、灰度发布</td>
+<td>审核通过</td>
+</tr>
+<tr>
+<td>第 12 周</td>
+<td>-</td>
+<td>正式上线、监控部署</td>
+<td>生产环境</td>
+</tr>
+</tbody></table>
+<p><strong>MVP 功能范围</strong>：</p>
+<ul>
+<li>✅ 微信小程序（定制 + 拼单 + 订单）</li>
+<li>✅ 基础拼单功能（创建/加入/支付）</li>
+<li>✅ 5 款基础板型、20 款基础图案</li>
+<li>✅ 微信支付（定金 + 尾款）</li>
+<li>✅ 简易管理后台</li>
+<li>❌ AI 参数推荐（V2 版本）</li>
+<li>❌ 板友匹配系统（V2 版本）</li>
+<li>❌ 图案市场（V2 版本）</li>
+</ul>
+<h3>4.2 正式版（6 个月）</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>工作内容</th>
+<th>交付物</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>第 1-3 月</strong></td>
+<td>-</td>
+<td>MVP 开发（同上）</td>
+<td>MVP 上线</td>
+</tr>
+<tr>
+<td><strong>第 4 月</strong></td>
+<td>4 周</td>
+<td>AI 功能开发</td>
+<td>AI 推荐上线</td>
+</tr>
+<tr>
+<td>第 13 周</td>
+<td>-</td>
+<td>用户数据采集、模型训练</td>
+<td>推荐模型 V1</td>
+</tr>
+<tr>
+<td>第 14 周</td>
+<td>-</td>
+<td>AI 参数推荐接口</td>
+<td>API 完成</td>
+</tr>
+<tr>
+<td>第 15 周</td>
+<td>-</td>
+<td>前端集成、A/B 测试</td>
+<td>功能上线</td>
+</tr>
+<tr>
+<td><strong>第 5 月</strong></td>
+<td>4 周</td>
+<td>社交功能开发</td>
+<td>社区上线</td>
+</tr>
+<tr>
+<td>第 16 周</td>
+<td>-</td>
+<td>板友匹配系统</td>
+<td>匹配算法</td>
+</tr>
+<tr>
+<td>第 17 周</td>
+<td>-</td>
+<td>板友社区、动态</td>
+<td>社区功能</td>
+</tr>
+<tr>
+<td>第 18 周</td>
+<td>-</td>
+<td>分享裂变、邀请奖励</td>
+<td>营销工具</td>
+</tr>
+<tr>
+<td><strong>第 6 月</strong></td>
+<td>4 周</td>
+<td>图案市场 + 优化</td>
+<td>完整版上线</td>
+</tr>
+<tr>
+<td>第 19 周</td>
+<td>-</td>
+<td>图案市场、设计师入驻</td>
+<td>市场上线</td>
+</tr>
+<tr>
+<td>第 20 周</td>
+<td>-</td>
+<td>性能优化、监控完善</td>
+<td>稳定性提升</td>
+</tr>
+<tr>
+<td>第 21 周</td>
+<td>-</td>
+<td>压力测试、安全审计</td>
+<td>安全报告</td>
+</tr>
+<tr>
+<td>第 22 周</td>
+<td>-</td>
+<td>正式版发布、推广准备</td>
+<td>正式版</td>
+</tr>
+</tbody></table>
+<h3>4.3 人员配置</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>人数</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>产品经理</td>
+<td>1</td>
+<td>需求、原型、项目管理</td>
+</tr>
+<tr>
+<td>UI 设计师</td>
+<td>1</td>
+<td>界面设计、视觉规范</td>
+</tr>
+<tr>
+<td>前端开发</td>
+<td>2</td>
+<td>小程序 + H5+ 后台</td>
+</tr>
+<tr>
+<td>后端开发</td>
+<td>2</td>
+<td>API 开发、数据库</td>
+</tr>
+<tr>
+<td>AI 工程师</td>
+<td>1 (兼职)</td>
+<td>推荐算法</td>
+</tr>
+<tr>
+<td>测试工程师</td>
+<td>1</td>
+<td>测试用例、质量保障</td>
+</tr>
+</tbody></table>
+<p><strong>合计</strong>：7-8 人团队</p>
+<hr>
+<h2>五、成本估算</h2>
+<h3>5.1 开发成本（6 个月）</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>金额</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>人力成本</td>
+<td>80-120 万</td>
+<td>7-8 人团队 × 6 个月</td>
+</tr>
+<tr>
+<td>云服务器</td>
+<td>5-8 万</td>
+<td>阿里云/腾讯云</td>
+</tr>
+<tr>
+<td>第三方服务</td>
+<td>3-5 万</td>
+<td>短信、OSS、CDN 等</td>
+</tr>
+<tr>
+<td>设计外包</td>
+<td>3-5 万</td>
+<td>UI/UX 设计（如外包）</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td><strong>90-140 万</strong></td>
+<td>含 3 个月缓冲</td>
+</tr>
+</tbody></table>
+<h3>5.2 运营成本（首年）</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>金额</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务器运维</td>
+<td>10-15 万</td>
+<td>云资源 + 运维人力</td>
+</tr>
+<tr>
+<td>营销推广</td>
+<td>30-50 万</td>
+<td>获客成本</td>
+</tr>
+<tr>
+<td>客服团队</td>
+<td>15-20 万</td>
+<td>2-3 人客服</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td><strong>55-85 万/年</strong></td>
+<td>首年运营</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>六、风险与建议</h2>
+<h3>6.1 技术风险</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>概率</th>
+<th>影响</th>
+<th>应对</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>拼单并发问题</td>
+<td>中</td>
+<td>高</td>
+<td>分布式锁 + 消息队列</td>
+</tr>
+<tr>
+<td>支付安全问题</td>
+<td>低</td>
+<td>高</td>
+<td>正规支付渠道 + 审计</td>
+</tr>
+<tr>
+<td>数据泄露</td>
+<td>低</td>
+<td>高</td>
+<td>加密存储 + 权限控制</td>
+</tr>
+<tr>
+<td>性能瓶颈</td>
+<td>中</td>
+<td>中</td>
+<td>缓存 + 数据库优化</td>
+</tr>
+</tbody></table>
+<h3>6.2 开发建议</h3>
+<ol>
+<li><strong>MVP 优先</strong>：先上线核心功能，验证商业模式</li>
+<li><strong>敏捷迭代</strong>：2 周一个 Sprint，快速响应反馈</li>
+<li><strong>数据驱动</strong>：埋点统计，用数据指导优化</li>
+<li><strong>供应链先行</strong>：技术同时推进工厂合作</li>
+<li><strong>法律合规</strong>：提前咨询律师，规避风险</li>
+</ol>
+<hr>
+<p><em>技术方案版本：v1.0</em><br><em>更新日期：2026-03-13</em></p>
+
+  </div>
+</body>
+</html>

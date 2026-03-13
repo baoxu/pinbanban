@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼板板 - 项目文档</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.8;
+      color: #2d3436;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f8f9fa;
+    }
+    .container {
+      background: white;
+      padding: 60px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 32px;
+      color: #1e90ff;
+      border-bottom: 3px solid #1e90ff;
+      padding-bottom: 15px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 24px;
+      color: #2d3436;
+      border-left: 4px solid #1e90ff;
+      padding-left: 15px;
+      margin-top: 40px;
+    }
+    h3 {
+      font-size: 20px;
+      color: #2d3436;
+      margin-top: 30px;
+    }
+    h4 {
+      font-size: 18px;
+      color: #636e72;
+      margin-top: 25px;
+    }
+    p { margin: 15px 0; }
+    ul, ol { margin: 15px 0; padding-left: 30px; }
+    li { margin: 8px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #dfe6e9;
+      padding: 12px 15px;
+      text-align: left;
+    }
+    th {
+      background: #f1f2f6;
+      font-weight: 600;
+      color: #2d3436;
+    }
+    tr:nth-child(even) { background: #f8f9fa; }
+    tr:hover { background: #e3f2fd; }
+    code {
+      background: #f1f2f6;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: #e84393;
+    }
+    pre {
+      background: #2d3436;
+      color: #dfe6e9;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+    blockquote {
+      border-left: 4px solid #1e90ff;
+      margin: 20px 0;
+      padding: 15px 20px;
+      background: #f1f8ff;
+      color: #636e72;
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #dfe6e9;
+      margin: 40px 0;
+    }
+    .toc {
+      background: #f8f9fa;
+      padding: 20px 30px;
+      border-radius: 8px;
+      margin: 30px 0;
+    }
+    .toc ul { margin: 10px 0; padding-left: 20px; }
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 40px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      a { color: #2d3436; text-decoration: none; }
+      pre { white-space: pre-wrap; word-wrap: break-word; }
+      @page { margin: 2cm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+<h1>拼板板 - 项目汇总</h1>
+<h2>给合伙人看的精简版</h2>
+<hr>
+<h2>🎯 一句话介绍</h2>
+<p><strong>拼板板</strong> = 滑雪板定制 + 拼单团购，让定制滑雪板从 6000 元降到 3000 多元。</p>
+<p>类似「武士团」小程序的拼单模式，但针对滑雪板这个垂直品类做了深度定制。</p>
+<hr>
+<h2>💡 核心创意</h2>
+<h3>痛点</h3>
+<ul>
+<li>市售滑雪板千篇一律，不符合个人技术特点</li>
+<li>定制板太贵（8000-15000 元），普通人买不起</li>
+<li>想团购但找不到同好</li>
+</ul>
+<h3>解决方案</h3>
+<pre><code>单人定制：6000 元
+  ↓ 拼 1 个人
+2 人拼单：4980 元/人（省 1020 元）
+  ↓ 再拼 1 个人
+3 人拼单：4380 元/人（省 1620 元）
+  ↓ 再拼 1 个人
+4 人拼单：3980 元/人（省 2020 元）
+</code></pre>
+<p><strong>用户得实惠，工厂多订单，平台赚差价 — 三赢</strong></p>
+<hr>
+<h2>📊 市场有多大？</h2>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中国滑雪人次（2025）</td>
+<td>2800 万</td>
+</tr>
+<tr>
+<td>滑雪装备市场规模</td>
+<td>220 亿/年</td>
+</tr>
+<tr>
+<td>单板滑雪占比</td>
+<td>68%</td>
+</tr>
+<tr>
+<td>目标用户（年滑雪 10 天+）</td>
+<td>约 300 万</td>
+</tr>
+<tr>
+<td>定制装备渗透率</td>
+<td>仅 5%（增长空间大）</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：市场在快速增长，定制需求未被满足，时机正好。</p>
+<hr>
+<h2>🏆 竞争优势</h2>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>国际品牌定制</th>
+<th>国内工作室</th>
+<th>淘宝成品</th>
+<th><strong>拼板板</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>价格</td>
+<td>8000-15000 元</td>
+<td>5000-10000 元</td>
+<td>1500-4000 元</td>
+<td><strong>3000-6000 元</strong></td>
+</tr>
+<tr>
+<td>个性化</td>
+<td>高</td>
+<td>高</td>
+<td>无</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>品质</td>
+<td>高</td>
+<td>不稳定</td>
+<td>一般</td>
+<td><strong>高（合作工厂）</strong></td>
+</tr>
+<tr>
+<td>社交属性</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+<td><strong>有（板友社区）</strong></td>
+</tr>
+<tr>
+<td>等待周期</td>
+<td>4-8 周</td>
+<td>2-4 周</td>
+<td>现货</td>
+<td><strong>3-4 周</strong></td>
+</tr>
+</tbody></table>
+<p><strong>核心差异化</strong>：性价比 + 个性化 + 社交 = 独家定位</p>
+<hr>
+<h2>💰 怎么赚钱？</h2>
+<h3>收入来源</h3>
+<ol>
+<li><strong>拼单差价</strong>（60%）：拼单价格与成本的差额</li>
+<li><strong>平台服务费</strong>（20%）：交易金额 5%</li>
+<li><strong>图案 IP 授权</strong>（10%）：设计师图案分成</li>
+<li><strong>增值服务</strong>（10%）：加急、保险、配件</li>
+</ol>
+<h3>盈利预测（第一年）</h3>
+<table>
+<thead>
+<tr>
+<th>季度</th>
+<th>订单量</th>
+<th>GMV</th>
+<th>净利润</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Q1</td>
+<td>50</td>
+<td>22.5 万</td>
+<td>-15 万</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>150</td>
+<td>64.5 万</td>
+<td>-5 万</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>300</td>
+<td>126 万</td>
+<td>15 万</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>500</td>
+<td>205 万</td>
+<td>40 万</td>
+</tr>
+</tbody></table>
+<p><strong>Q4 雪季旺季实现盈亏平衡，第二年盈利</strong></p>
+<hr>
+<h2>🛠️ 怎么做出来？</h2>
+<h3>产品形态</h3>
+<ul>
+<li><strong>微信小程序</strong>（主）：用户定制、拼单、订单管理</li>
+<li><strong>H5 页面</strong>（辅）：分享传播、外部引流</li>
+<li><strong>管理后台</strong>：订单处理、工厂对接、数据分析</li>
+</ul>
+<h3>核心功能</h3>
+<ol>
+<li><strong>板型定制</strong>：长度、板腰、侧切、固定器角度</li>
+<li><strong>图案选择</strong>：100+ 可选图案，支持自定义</li>
+<li><strong>拼单系统</strong>：创建拼单、邀请好友、自动匹配</li>
+<li><strong>订单追踪</strong>：生产进度、物流信息实时更新</li>
+<li><strong>板友社区</strong>：晒单、交流、二手流转（V2）</li>
+</ol>
+<h3>技术实现</h3>
+<ul>
+<li>前端：Taro（小程序）+ Vue3（H5）</li>
+<li>后端：Node.js + NestJS</li>
+<li>数据库：MySQL + Redis</li>
+<li>部署：阿里云 + Docker</li>
+</ul>
+<hr>
+<h2>⏱️ 需要多久？多少钱？</h2>
+<h3>MVP 版本（3 个月）</h3>
+<ul>
+<li><strong>功能</strong>：定制 + 拼单 + 支付 + 订单管理</li>
+<li><strong>人员</strong>：7-8 人团队</li>
+<li><strong>成本</strong>：90-140 万（含 3 个月运营缓冲）</li>
+</ul>
+<h3>正式版（6 个月）</h3>
+<ul>
+<li><strong>功能</strong>：MVP + AI 推荐 + 板友匹配 + 图案市场</li>
+<li><strong>成本</strong>：150-200 万（含首年运营）</li>
+</ul>
+<h3>关键里程碑</h3>
+<pre><code>第 1 月：需求确认 + 技术选型 + 环境搭建
+第 2 月：核心功能开发
+第 3 月：测试优化 + MVP 上线 🚀
+第 4-5 月：AI 功能 + 社交功能
+第 6 月：正式版发布
+</code></pre>
+<hr>
+<h2>⚠️ 有什么风险？</h2>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>应对方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>供应链不稳定</td>
+<td>签约 2-3 家工厂，建立备选库</td>
+</tr>
+<tr>
+<td>拼单失败率高</td>
+<td>平台兜底，超时自动成团或退款</td>
+</tr>
+<tr>
+<td>质量纠纷</td>
+<td>第三方质检，7 天无理由退换</td>
+</tr>
+<tr>
+<td>季节性明显</td>
+<td>夏季反季预售、配件、保养服务</td>
+</tr>
+<tr>
+<td>获客成本高</td>
+<td>雪场合作、KOL 分销、社群运营</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🎯 下一步建议</h2>
+<h3>立即行动（1-2 周）</h3>
+<ol>
+<li>✅ 确认合伙人意向和分工</li>
+<li>✅ 接触 2-3 家工厂，谈合作意向</li>
+<li>✅ 注册公司、申请微信小程序</li>
+<li>✅ 组建核心团队（产品 + 技术）</li>
+</ol>
+<h3>MVP 阶段（3 个月）</h3>
+<ol>
+<li>开发小程序 MVP</li>
+<li>招募 100 个种子用户（雪友群、KOL）</li>
+<li>验证拼单转化率（目标&gt;30%）</li>
+<li>迭代优化</li>
+</ol>
+<h3>正式版（6 个月）</h3>
+<ol>
+<li>AI 推荐 + 板友匹配上线</li>
+<li>扩大营销，目标 1000 订单</li>
+<li>探索 B 端合作（雪场、俱乐部）</li>
+<li>准备 Pre-A 融资</li>
+</ol>
+<hr>
+<h2>📁 详细文档</h2>
+<p>完整文档在 <code>/Users/guanliyuan/pinbanban/docs/</code> 目录：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>00-项目汇总 - 给合伙人看.md</code></td>
+<td>本文件，精简版</td>
+</tr>
+<tr>
+<td><code>01-商业可行性分析.md</code></td>
+<td>详细市场分析、商业模式</td>
+</tr>
+<tr>
+<td><code>02-产品原型设计.md</code></td>
+<td>页面原型、交互设计</td>
+</tr>
+<tr>
+<td><code>03-业务流程图.md</code></td>
+<td>流程图、状态机</td>
+</tr>
+<tr>
+<td><code>04-技术方案与时间估算.md</code></td>
+<td>技术架构、开发计划、成本</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🤝 我需要你做什么？</h2>
+<h3>如果你负责技术</h3>
+<ul>
+<li>review 技术方案，确认可行性</li>
+<li>评估开发时间，提出优化建议</li>
+<li>推荐靠谱的开发团队或外包</li>
+</ul>
+<h3>如果你负责商务</h3>
+<ul>
+<li>对接工厂资源，谈合作条件</li>
+<li>联系雪场、俱乐部，谈推广合作</li>
+<li>申请政府补贴、创业扶持</li>
+</ul>
+<h3>如果你负责运营</h3>
+<ul>
+<li>制定获客策略，预算规划</li>
+<li>招募种子用户，建立社群</li>
+<li>策划上线活动、营销方案</li>
+</ul>
+<h3>如果你负责资金</h3>
+<ul>
+<li>确认投资额度和节奏</li>
+<li>开设公司账户、财务规划</li>
+<li>准备融资材料（BP、财务模型）</li>
+</ul>
+<hr>
+<h2>❓ 常见问题</h2>
+<p><strong>Q: 为什么是滑雪板？其他装备不行吗？</strong><br>A: 滑雪板是滑雪装备中客单价最高、个性化需求最强的品类。板子选对了，技术进步快。先做透一个品类，再扩展到固定器、雪鞋等。</p>
+<p><strong>Q: 拼单失败了怎么办？</strong><br>A: 有三种处理：1) 自动退款 + 优惠券补偿；2) 推荐相似拼单；3) 平台兜底成团（控制比例）。</p>
+<p><strong>Q: 工厂愿意配合小批量定制吗？</strong><br>A: 拼单本质是「小单快反」，把多个小单合并成中单，工厂利润更高。我们已经调研过，多家工厂表示有兴趣。</p>
+<p><strong>Q: 和武士团有什么区别？</strong><br>A: 武士团是餐饮，我们是装备。餐饮是即时消费，我们是预售定制。但拼单逻辑相通，武士团验证了模式可行性。</p>
+<p><strong>Q: 技术实现难度大吗？</strong><br>A: 核心是拼单状态机和实时匹配，技术成熟。难点在供应链管理和用户体验，需要精细化运营。</p>
+<hr>
+<h2>📞 联系方式</h2>
+<p><strong>项目负责人</strong>：[你的名字]<br><strong>技术负责人</strong>：[待确认]<br><strong>联系微信</strong>：[你的微信]</p>
+<hr>
+<p><em>最后更新：2026-03-13</em><br><em>版本：v1.0</em></p>
+<hr>
+<h2>✍️ 合伙人确认</h2>
+<ul>
+<li><input disabled="" type="checkbox"> 我理解并认同项目方向</li>
+<li><input disabled="" type="checkbox"> 我确认我的角色和分工：_______________</li>
+<li><input disabled="" type="checkbox"> 我确认我的投入（时间/资金/资源）：_______________</li>
+<li><input disabled="" type="checkbox"> 我有以下补充建议：_______________</li>
+</ul>
+<p><strong>签名</strong>：_______________  <strong>日期</strong>：_______________</p>
+
+  </div>
+</body>
+</html>
